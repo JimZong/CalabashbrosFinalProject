@@ -7,7 +7,7 @@
 ## 程序代码及设计思路
 ### 构建基本框架
 - ##### 下载maven并创建maven项目
-- ##### 在pom.xml中添加junit的支持
+- ##### 在pom.xml中添加junit的支持以及添加maven-jar-plugin
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -31,6 +31,24 @@
             <version>4.12</version>
         </dependency>
     </dependencies>
+	<build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>Main</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
 ```
 - ##### 在src/main/resource中添加项目所需图片
@@ -556,6 +574,7 @@ class Board{//棋盘的对象
 >每当一个生物行动，创建一个线程为其使用
 >提供开始战斗的方法，当场上双方都有生物存在时一直保持场上的生物行动
 >包括生物的行动逻辑
+>对于存储文件的路径，创建D://161220189savings文件夹进行存储，读取文件默认打开本文件夹
 ```java
 public class BattleField {//战场，保存了每一个单位和棋盘信息
     public enum Status{
@@ -573,7 +592,7 @@ public class BattleField {//战场，保存了每一个单位和棋盘信息
     private FileWriter fw;
     private PrintWriter pw;
     BattleField(int maxRow, int maxColumn, boolean debug, AnchorPane pane){
-        String url="savings/";
+        String url="D:\\161220189savings\\";
         status=Status.UNSTARTED;
         this.maxColumn=maxColumn;
         this.maxRow=maxRow;
@@ -590,6 +609,8 @@ public class BattleField {//战场，保存了每一个单位和棋盘信息
                 saveURL = url + i + ".save";
                 file = new File(saveURL);
             }
+            if(!file.getParentFile().exists())
+                file.getParentFile().mkdirs();
             file.createNewFile();
             fw=new FileWriter(file);
             pw=new PrintWriter(fw);
@@ -597,6 +618,7 @@ public class BattleField {//战场，保存了每一个单位和棋盘信息
         catch (Exception e){
             System.out.println("creating file error");
             e.printStackTrace();
+            System.exit(0);
         }
         randomRearrange(debug);
     }
@@ -605,7 +627,7 @@ public class BattleField {//战场，保存了每一个单位和棋盘信息
             return;
         board.stop();
         FileChooser fileChooser=new FileChooser();
-        fileChooser.setInitialDirectory(new File("savings"));
+        fileChooser.setInitialDirectory(new File("D:\\161220189savings"));
         fileChooser.setTitle("Open File");
         File file=fileChooser.showOpenDialog(stage);
         if(file!=null&&file.exists()) {
