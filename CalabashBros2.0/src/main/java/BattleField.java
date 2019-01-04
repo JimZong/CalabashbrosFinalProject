@@ -28,7 +28,7 @@ public class BattleField {//战场，保存了每一个单位和棋盘信息
     private FileWriter fw;
     private PrintWriter pw;
     BattleField(int maxRow, int maxColumn, boolean debug, AnchorPane pane){
-        String url="savings/";
+        String url="D:\\161220189savings\\";
         status=Status.UNSTARTED;
         this.maxColumn=maxColumn;
         this.maxRow=maxRow;
@@ -45,6 +45,8 @@ public class BattleField {//战场，保存了每一个单位和棋盘信息
                 saveURL = url + i + ".save";
                 file = new File(saveURL);
             }
+            if(!file.getParentFile().exists())
+                file.getParentFile().mkdirs();
             file.createNewFile();
             fw=new FileWriter(file);
             pw=new PrintWriter(fw);
@@ -52,6 +54,7 @@ public class BattleField {//战场，保存了每一个单位和棋盘信息
         catch (Exception e){
             System.out.println("creating file error");
             e.printStackTrace();
+            System.exit(0);
         }
         randomRearrange(debug);
     }
@@ -60,7 +63,7 @@ public class BattleField {//战场，保存了每一个单位和棋盘信息
             return;
         board.stop();
         FileChooser fileChooser=new FileChooser();
-        fileChooser.setInitialDirectory(new File("savings"));
+        fileChooser.setInitialDirectory(new File("D:\\161220189savings"));
         fileChooser.setTitle("Open File");
         File file=fileChooser.showOpenDialog(stage);
         if(file!=null&&file.exists()) {
